@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A Hello World example tool for Optimizely Opal that integrates with Zapier",
   "main": "src/index.ts",
-  "type": "module",
   "scripts": {
     "start": "node src/index.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
