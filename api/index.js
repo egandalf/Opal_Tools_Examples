@@ -1,13 +1,16 @@
-import { ToolsService, tool } from '@optimizely-opal/opal-tools-sdk';
-import express from 'express';
-import axios from 'axios';
-import dotenv from 'dotenv';
+// api/index.js
+const express = require('express');
+const axios = require('axios');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const toolsService = new ToolsService(app);
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Configuration from environment variables
 const config = {
@@ -29,7 +32,7 @@ const config = {
 
 // Validate required environment variables
 function validateConfig() {
-  const errors: string[] = [];
+  const errors = [];
   
   if (!config.zapier.defaultWebhookUrl && config.server.environment === 'production') {
     errors.push('ZAPIER_DEFAULT_WEBHOOK_URL is required in production');
@@ -38,10 +41,11 @@ function validateConfig() {
   if (errors.length > 0) {
     console.error('❌ Configuration errors:');
     errors.forEach(error => console.error(`  - ${error}`));
-    process.exit(1);
+    return false;
   }
   
   console.log('✅ Configuration validated successfully');
+  return true;
 }
 
 // Tool metadata for discovery
@@ -82,7 +86,7 @@ const toolMetadata = {
 // Discovery endpoint - returns available tools
 app.get('/discovery', (req, res) => {
   res.json({
-    functions: {toolMetadata},
+    functions: { toolMetadata },
     service: {
       name: 'Zapier Integration Tool',
       version: '1.0.0',
@@ -91,24 +95,8 @@ app.get('/discovery', (req, res) => {
   });
 });
 
-// Interface for our tool parameters
-interface ZapierTriggerParameters {
-  webhookUrl?: string; // Now optional - can fall back to default
-  message: string;
-  userName?: string;
-  experimentId?: string;
-  priority?: 'low' | 'medium' | 'high';
-}
-
-// Interface for the response
-interface ZapierTriggerResponse {
-  success: boolean;
-  message: string;
-  zapierResponse?: any;
-}
-
-// Remove the @tool decorator and make it a regular function
-async function triggerZapierWebhook(parameters: ZapierTriggerParameters): Promise<ZapierTriggerResponse> {
+// Zapier webhook trigger function
+async function triggerZapierWebhook(parameters) {
   try {
     // Use provided webhook URL or fall back to default
     const webhookUrl = parameters.webhookUrl || config.zapier.defaultWebhookUrl;
@@ -183,7 +171,7 @@ async function triggerZapierWebhook(parameters: ZapierTriggerParameters): Promis
   } catch (error) {
     console.error('❌ Error triggering Zapier webhook:', error);
     
-    if (axios.isAxiosError(error)) {
+    if (axios.isAxiosError && axios.isAxiosError(error)) {
       return {
         success: false,
         message: `Failed to trigger Zapier webhook after ${config.zapier.retryAttempts} attempts: ${error.response?.status} ${error.response?.statusText || error.message}`
@@ -197,7 +185,21 @@ async function triggerZapierWebhook(parameters: ZapierTriggerParameters): Promis
   }
 }
 
-// Optional: Add a simple test endpoint
+// Webhook trigger endpoint
+app.post('/trigger', async (req, res) => {
+  try {
+    const result = await triggerZapierWebhook(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+});
+
+// Test endpoint
 app.get('/test', (req, res) => {
   res.json({
     message: 'Zapier Hello World Tool is running!',
@@ -212,7 +214,7 @@ app.get('/test', (req, res) => {
   });
 });
 
-// Optional: Health check endpoint
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
@@ -221,13 +223,32 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Start the server
-app.listen(config.server.port, () => {
-  console.log(`🚀 Zapier Hello World Tool service running on port ${config.server.port}`);
-  console.log(`🌍 Environment: ${config.server.environment}`);
-  console.log(`📍 Discovery endpoint: http://localhost:${config.server.port}/discovery`);
-  console.log(`🧪 Test endpoint: http://localhost:${config.server.port}/test`);
-  console.log(`❤️  Health check: http://localhost:${config.server.port}/health`);
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Zapier Integration Tool',
+    endpoints: {
+      discovery: '/discovery',
+      trigger: '/trigger',
+      test: '/test',
+      health: '/health'
+    }
+  });
 });
 
-export { app, triggerZapierWebhook };
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+// Validate configuration on startup
+validateConfig();
+
+// Export the Express app as a serverless function
+module.exports = app;
