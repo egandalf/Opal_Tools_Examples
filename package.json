@@ -2,13 +2,15 @@
   "name": "zapier-hello-world-tool",
   "version": "1.0.0",
   "description": "A Hello World example tool for Optimizely Opal that integrates with Zapier",
-  "main": "app.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
+    "build": "tsc --build",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts --fix"
   },
   "keywords": ["optimizely", "opal", "zapier", "webhook", "automation"],
   "author": "Your Name",
@@ -22,10 +24,11 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^9.0.0",
     "jest": "^29.7.0",
+    "rimraf": "^5.0.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.0"
   }
