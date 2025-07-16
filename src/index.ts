@@ -82,7 +82,7 @@ const toolMetadata = {
 // Discovery endpoint - returns available tools
 app.get('/discovery', (req, res) => {
   res.json({
-    tools: [toolMetadata],
+    functions: [toolMetadata],
     service: {
       name: 'Zapier Integration Tool',
       version: '1.0.0',
