@@ -4,8 +4,8 @@
   "description": "Simple Opal Tools Registry for Vercel",
   "main": "index.js",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
+    //"dev": "vercel dev",
+    //"build": "vercel build",
     "deploy": "vercel"
   },
   "dependencies": {},
