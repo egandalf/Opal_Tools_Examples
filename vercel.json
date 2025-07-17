@@ -16,6 +16,16 @@
       "src": "/api/([^/]+).*",
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       "dest": "/api/$1.js"
+    },
+    {
+      "src": "/api/tools/([^/]+)",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "dest": "/api/tools/$1.js"
+    },
+    {
+      "src": "/api/tools/([^/]+).*",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "dest": "/api/tools/$1.js"
     }
   ]
 }
