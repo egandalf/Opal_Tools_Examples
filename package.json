@@ -1,35 +1,18 @@
 {
-  "name": "zapier-hello-world-tool",
+  "name": "opal-tools-registry",
   "version": "1.0.0",
-  "description": "A Hello World example tool for Optimizely Opal that integrates with Zapier",
-  "main": "src/index.ts",
+  "description": "Simple Opal Tools Registry for Vercel",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/index.ts",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc --build",
-    "clean": "rimraf dist",
-    "prebuild": "npm run clean",
-    "test": "jest",
-    "lint": "eslint src/**/*.ts --fix"
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "deploy": "vercel"
   },
-  "keywords": ["optimizely", "opal", "zapier", "webhook", "automation"],
-  "author": "Your Name",
-  "license": "MIT",
-  "dependencies": {
-    "@optimizely-opal/opal-tools-sdk": "latest",
-    "axios": "^1.6.0",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.10.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
-    "eslint": "^8.0.0",
-    "jest": "^29.7.0",
-    "rimraf": "^5.0.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.0"
+    "vercel": "^32.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
