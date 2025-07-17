@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "dev",
     "build": "build",
-    "deploy": "vercel"
+    "deploy": "vercel --prod"
   },
   "dependencies": {},
   "devDependencies": {
