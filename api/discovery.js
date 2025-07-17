@@ -1,9 +1,8 @@
-// api/discovery.js
-module.exports = function handler(req, res) {
+//discovery.js
+export default function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
   const baseUrl = process.env.BASE_URL || '';
   
   const functions = [
@@ -49,6 +48,5 @@ module.exports = function handler(req, res) {
       http_method: "POST"
     }
   ];
-
   res.status(200).json({ functions });
 }
