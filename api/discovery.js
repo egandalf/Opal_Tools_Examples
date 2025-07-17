@@ -23,7 +23,7 @@ const handler = async (req, res) => {
           required: false
         }
       ],
-      endpoint: `${baseUrl}/tools/greeting`,
+      endpoint: `/tools/greeting`,
       http_method: "POST"
     },
     {
@@ -37,14 +37,14 @@ const handler = async (req, res) => {
           required: false
         }
       ],
-      endpoint: `${baseUrl}/tools/todays-date`,
+      endpoint: `/tools/todays-date`,
       http_method: "POST"
     },
     {
       name: "rick-roll",
       description: "Rick rolls the user",
       parameters: [],
-      endpoint: `${baseUrl}/tools/rick-roll`,
+      endpoint: `/tools/rick-roll`,
       http_method: "POST"
     }
   ];
